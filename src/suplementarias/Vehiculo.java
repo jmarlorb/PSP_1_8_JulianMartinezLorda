@@ -1,51 +1,26 @@
 package suplementarias;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
-public class Vehiculo extends Thread {
+public class Vehiculo {
 
 	private String idVehiculo;
 	private int capacidadRestantePaquetes;
-	private List<Paquete> lineaCarga;
-	private Semaphore sem;
-	public Vehiculo(String id, List<Paquete> lineaCarga, Semaphore sem) {
+	private List<Paquete> contenido;
+	private LineaCarga lineaCarga;
+	public Vehiculo(String id) {
 		super();
 		this.idVehiculo = id;
 		this.capacidadRestantePaquetes = (int)(9*(Math.random()/Math.nextDown(1.0)+1));
-		this.lineaCarga = lineaCarga;
-		this.sem = sem;
+		this.contenido = new ArrayList<Paquete>();
 	}
 	
-	public void run() {
-		Paquete auxActual;
-		synchronized(this.lineaCarga) {
-			System.out.println("El camión "+ this.idVehiculo+ " empieza a recibir paquetes de la linea de carga.");
-			while (this.lineaCarga.size()>0 && this.capacidadRestantePaquetes>0) {
-				auxActual=this.lineaCarga.remove(0);
-				System.out.println("El camión " + this.idVehiculo+" comienza a cargar paquete.");
-				try {
-					Thread.sleep(auxActual.getTiempoCargaEnMilisegundos());
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				this.capacidadRestantePaquetes--;
-				System.out.println("El camión " + this.idVehiculo+ " termina de cargar paquete.");
-			}
-			try {
-				sem.acquire();
-				System.out.println("El camión " + this.idVehiculo+ " sale a reparto");
-				sem.release();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			this.lineaCarga.notify();
-		}
+	
 		
 		
-	}
+		
+	
 	
 	public String getIdVehiculo() {
 		return idVehiculo;
@@ -61,13 +36,19 @@ public class Vehiculo extends Thread {
 	public void setCapacidadPaquetes(int capacidadPaquetes) {
 		this.capacidadRestantePaquetes = capacidadPaquetes;
 	}
-	public List<Paquete> getLineaCarga() {
-		return lineaCarga;
+	public List<Paquete> getContenido() {
+		return contenido;
 	}
-	public void setLineaCarga(List<Paquete> lineaCarga) {
-		this.lineaCarga = lineaCarga;
+	public void setContenido(List<Paquete> contenido) {
+		this.contenido = contenido;
+	}
+	public boolean hasLineaCarga() {
+		return this.lineaCarga != null;
 	}
 	
+	public void setLineaCarga(LineaCarga ln) {
+		this.lineaCarga = ln;
+	}
 	
 	
 	
